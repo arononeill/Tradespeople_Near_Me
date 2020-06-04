@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% load crispy_forms_tags %}
+{% csrf_token %}
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+        <link rel="stylesheet" type="text/css" href="{% static 'routing/leaflet-routing-machine.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+        <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}" ></script>
+        <script type="text/javascript" src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}" ></script>
+        <script type="text/javascript" src="{% static 'routing/leaflet-routing-machine.js' %}" ></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+        <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+
+    <body>
+
+        {% load widget_tweaks %}
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="container" id="tradespersonEditLoginBody">
+            <div class="row">
+                <div class="col-sm-9 col-md-7 col-lg-8 mx-auto">
+                    <div class="card card-signin my-5">
+                        <div class="card-body">
+                        <h5 class="card-title text-center">Edit My Profile</h5>
+                            <form method="post"  class="form-signin" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-row form-label-group">
+                                    <div class="form-group col-md-4 mb-0" id="tradespersonEditUsername">
+                                        {{ form.username|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4" id="changePasswordDiv">
+                                        <a href="{% url 'change_password' %}">Change Password</a>
+                                    </div>
+                                </div>
+                                <div class="form-row form-label-group">
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.firstname|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.lastname|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.phone_no|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="form-row form-label-group">
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.email|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.email2|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.town|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="form-row form-label-group">
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.company_name|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.website_url|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 mb-0">
+                                        {{ form.travel_distance|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="form-row form-label-group">
+                                    <div class="form-group col-md-4 col-4 mb-0" id="dropdownSelector">
+                                        {{ form.occupation|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 col-4 mb-0" id="dropdownSelector">
+                                        {{ form.working_hours|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 col-4 mb-0" id="dropdownSelector">
+                                        {{ form.county|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="form-row form-label-group">
+                                    <div class="form-group col-md-8 col-12mb-0" id="EditImageInput">
+                                        {{ form.image|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-4 mb-0" id="changeLocation">
+                                        <a role="menuitem" onclick="updateTradespersonLocation()">Update My Location!</a>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-lg btn-primary btn-block text-uppercase" id="signInBtn3" type="submit">Submit</button>
+                                <hr class="my-4">
+                                <a class="btn btn-lg btn-consumer btn-block text-uppercase" id="loginBtn3" href="{% url 'login' %}" type="submit">Login</a>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+
+        </script>
+    </body>
+    {% endblock %}
+</html>

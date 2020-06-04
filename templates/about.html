@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% csrf_token %}
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+    <link rel="stylesheet" type="text/css" href="{% static 'routing/leaflet-routing-machine.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+    <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'routing/leaflet-routing-machine.js' %}" ></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <Title>Document</Title>
+    <style>
+
+    </style>
+    </head>
+
+    <body>
+        <h1 class="aboutTitle">
+          <span id="aboutTitleGradient">Tradespeople Near Me</span>
+          <span id="AboutUsTitle">About Us</span>
+          <span id="desc">A simple, user-friendly web application will act as a medium between tradesmen and customers. This application will subsequently enable users to login as either a tradesperson or a consumer. There will also be an admin whom will monitor the data displayed to the consumer.<br><br>Tradespeople Near Me will act as a platform that provides tradespeople with an opportunity to advertise their services in the form of a web page, with this web page containing helpful information for visiting consumers. It will also illustrate to the consumer, the diameter in which each individual tradesman is willing to travel to carry out a job. Not only this but it will give them an opportunity to display pictures of their previous work as well as their contact information. This will be implemented in the form of a portfolio so that registered tradespeople can tailor their page to their specific requirements. Upon viewing these tradespeople, consumers will have the opportunity to save their details into a favourites page so that they can be easily accessed again.<br><br>This project will take the form of a progressive web app (PWA) and will contain various web pages so that consumers can query every possible tradesperson in their area. Storing a tradesman as a favourite results in it being stored in cache on the device. This will be accomplish using a service worker and will allow for offline use.</span>
+        </h1>
+    </body>
+    {% endblock %}
+</html>

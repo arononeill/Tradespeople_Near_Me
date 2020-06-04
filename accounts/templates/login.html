@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% extends "base.html" %}
+    {% block content %}
+    {% load staticfiles %}
+    {% load leaflet_tags %}
+    {% load crispy_forms_tags %}
+    {% csrf_token %}
+    <head>
+        {% leaflet_js %}
+        {% leaflet_css %}
+        <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+        <link rel="stylesheet" type="text/css" href="{% static 'routing/leaflet-routing-machine.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+        <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}" ></script>
+        <script type="text/javascript" src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}" ></script>
+        <script type="text/javascript" src="{% static 'routing/leaflet-routing-machine.js' %}" ></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+        <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+        <script type="text/javascript" src="{% static 'js/mapWork.js' %}" ></script>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div class="container" id="loginBody">
+            <div class="row">
+              <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                  <div class="card-body">
+                    <h5 class="card-title text-center">Sign In</h5>
+                    <form method="post"  class="form-signin" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row form-label-group">
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.username|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row form-label-group">
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.password|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-4" id="resetPassword">
+                            <a href="{% url 'reset_password' %}" id="userSignUp" style="">Forgot Password?</a>
+                        </div>
+
+                        <button class="btn btn-lg btn-primary btn-block text-uppercase" id="signInBtn" type="submit">Sign in</button>
+                        <hr class="my-4">
+                        <a class="btn btn-lg btn-consumer btn-block text-uppercase" href="{% url 'userSignUp' %}" type="submit">Sign Up</a>
+                        <a class="btn btn-lg btn-tradesperson btn-block text-uppercase" href="{% url 'register' %}">
+                            <i class="fa fa-toolbox"></i>
+                            Sign up as a Tradesperson
+                            <i class="fa fa-toolbox"></i>
+                        </a>
+
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </body>
+    {% endblock %}
+</html>

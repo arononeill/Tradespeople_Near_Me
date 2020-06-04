@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% csrf_token %}
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+    <link rel="stylesheet" type="text/css" href="{% static 'routing/leaflet-routing-machine.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+    <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'routing/leaflet-routing-machine.js' %}" ></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: rgba(35, 97, 146, 0.2);
+        }
+        #side_panel {
+            background-color:  rgb(35, 97, 146);
+        }
+        #searching {
+        }
+        #searching button {
+            margin: 1%;
+        }
+        #plumber {
+            margin-top: 1%;
+            margin-left: 3%;
+        }
+        .tradespersonContent {
+            padding-top: .75rem;
+            padding-left: 1.25rem;
+        }
+        #side_panel {
+            display: none;
+        }
+        #map {
+            height: 45rem;
+            padding-left: 0 !important;
+        }
+        #body {
+            height: 100%;
+        }
+        .scrollable {
+            height: 45rem;
+            overflow: auto;
+            display: block;
+        }
+        #dropdown {
+            margin: 1%;
+            text-align: center;
+            margin-left: 20%;
+        }
+        #dropdown a, #dropdown2 a {
+            font-size: 1.5rem;
+            text-transform: none;
+            width: 100%;
+        }
+        #dropdown2 {
+            margin: 1%;
+            width: 20%;
+        }
+        #search_dropdown {
+            top: 95%;
+            width: 100%;
+        }
+        #map_container {
+            max-width: 100%;
+        }
+        #nav-profile2 {
+            margin-right: -15px;
+        }
+        .leaflet-left {
+            right: 0;
+            left: auto;
+        }
+        #id {
+            background-color: red;
+        }
+        .leaflet-popup-content {
+            text-align: center;
+        }
+        .marker {
+            display: none;
+        }
+        #PremiumListingsTitle {
+            padding-top: 2%;
+            border-bottom: 2px solid #4f4f4f;
+            font-family: 'Open Sans', sans-serif;
+            text-transform: capitalize;
+            font-size: 15px;
+            margin-bottom: 25px;
+        }
+        #PremiumListingsTitle h2 {
+            font-family: 'Open Sans', sans-serif;
+            text-transform: capitalize;
+            font-size: 15px;
+        }
+        #PremiumListingsName {
+            font-family: 'Open Sans', sans-serif;
+            text-transform: capitalize;
+            font-size: 15px;
+            text-align: center;
+            color: #333;
+            margin-top: 5%;
+            margin-bottom: 5%;
+        }
+        #PremiumListings h4 {
+            text-transform: capitalize;
+            line-height: 150%;
+            text-align: left;
+            margin-left: 15%;
+            font-size: 1.5rem;
+            letter-spacing: 0px;
+        }
+        #PremiumListings {
+            margin-top: 4%;
+        }
+        #listingsContainer {
+            max-width: 100%;
+        }
+        #body {
+            margin-left: 15px;
+            margin-right: 0px;
+        }
+        .PremiumListings {
+            text-align: center;
+        }
+        .PremiumListings1 {
+            margin-top: 0px;
+            width: 100%;
+            max-height: 50%;
+        }
+        .PremiumListings,
+        #PremiumListings img {
+            height: 40%;
+            width: 80%;
+            margin-left: 10%;
+        }
+        .PremiumListingsImageJS {
+            height: 200px;
+            margin-top: 0px;
+        }
+        .PremiumDetails {
+            margin-bottom: 10%;
+        }
+        #plumberOnly {
+            color: red
+        }
+        #ElectricianOnly {
+            color: blue;
+        }
+        #PainterOnly {
+            color: green;
+        }
+        #map_container {
+            display: block;
+        }
+        .dropdown-item.active, .dropdown-item:active {
+            color: #fff;
+            text-decoration: none;
+            background-color: #fff;
+        }
+        </style>
+    </head>
+
+    <body onload="showAllPlumbers(0)">
+    <div id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class="row">
+            <div class="col-md-3" id="dropdown">
+                <a class="btn btn-secondary dropdown-toggle" id="dropdownText" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-expanded="false">
+                Select a Tradesperson
+                </a>
+
+                <div class="dropdown-menu" id="search_dropdown" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" id="plumberOnly" href="#">Plumber</a>
+                    <a class="dropdown-item" id="ElectricianOnly" href="#">Electrician</a>
+                    <a class="dropdown-item" id="PainterOnly" href="#">Painter</a>
+                </div>
+            </div>
+            <div class="col-md-3" id="dropdown2">
+                <a class="btn btn-secondary dropdown-toggle" id="dropdownText" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-expanded="false">
+                County
+                </a>
+
+                <div class="dropdown-menu" id="search_dropdown" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" id="plumberOnly" href="#">Plumber</a>
+                    <a class="dropdown-item" id="ElectricianOnly" href="#">Electrician</a>
+                    <a class="dropdown-item" id="PainterOnly" href="#">Painter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="body">
+        <div class="container" id="map_container">
+            <div class="col-md-4">
+                <div id="side_panel">
+                    <div class="card border-dark mb-12" id="nav-profile2">
+                        <div class="card-body text-dark">
+                            <p class="card-text"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" id="map">
+                <script type="text/javascript">
+                    function our_layers(map) {
+                        showAllPremiumTradespeople();
+                        var markerGroup = L.layerGroup().addTo(map);
+                        var markerGroup1 = L.layerGroup().addTo(map);
+                        var markerGroup2 = L.layerGroup().addTo(map);
+                        var redIcon = L.icon({
+                            iconUrl: '../static/leaflet/images/marker-icon-red3.png',
+                            iconSize: [40, 40],
+                            iconAnchor: [20, 40],
+                            popupAnchor: [0, -36],
+                        });
+                        var blueIcon = L.icon({
+                            iconUrl: '../static/leaflet/images/marker-icon-blue.png',
+                            iconSize: [37, 40],
+                            iconAnchor: [20, 40],
+                            popupAnchor: [0, -36],
+                        });
+                        var greenIcon = L.icon({
+                            iconUrl: '../static/leaflet/images/marker-icon-green.png',
+                            iconSize: [37, 40],
+                            iconAnchor: [20, 40],
+                            popupAnchor: [0, -36],
+                        });
+                        var points = new L.GeoJSON.AJAX("{% url 'tradesperson' %}",{
+                            onEachFeature: function(feature, layer) {
+                                var marker = [];
+                                var name = feature.properties.firstname + " " + feature.properties.lastname;
+                                if (feature.properties.occupation === 'Plumber') {
+                                    var lat = layer._latlng.lat;
+                                    var long = layer._latlng.lng;
+
+                                    var circleColor = 'red';
+                                    /*var circle = L.circle([lat, long], 9000, {
+                                        color: circleColor,
+                                        fillColor: circleColor,
+                                        fillOpacity: 0.5
+                                    });*/
+                                    let clicked;
+                                    var marker3 = L.marker([lat, long], {
+                                        icon: redIcon
+                                    }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                        .addTo(markerGroup)
+                                        .on('click', function(e) {
+                                            //map.removeLayer(marker3);
+                                            marker_radius = (feature.properties.travel_distance) * 1000;
+                                            circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                            map.removeLayer(circle);
+                                            circle.addTo(map);
+                                            clicked = 1;
+                                            console.log(clicked);
+                                        });
+                                }
+                                if (feature.properties.occupation === 'Electrician') {
+                                    var lat = layer._latlng.lat;
+                                    var long = layer._latlng.lng;
+                                    var marker2 = L.marker([lat, long], {
+                                        icon: blueIcon
+                                    }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                        .addTo(markerGroup2)
+                                }
+                                if (feature.properties.occupation === 'Painter') {
+                                    var lat = layer._latlng.lat;
+                                    var long = layer._latlng.lng;
+                                    var marker1 = L.marker([lat, long], {
+                                        icon: greenIcon
+                                    }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                        .addTo(markerGroup1)
+                                }
+
+                                var button1 = document.getElementById('plumberOnly');
+                                button1.onclick = function() {
+                                    var index = 0;
+                                    button1.onclick = showAllPlumbers(0);
+                                    map.eachLayer(function (layer) {
+                                        if (index !== 0) {
+                                            map.removeLayer(layer);
+                                        }
+                                        index++;
+                                    });
+                                    markerGroup.addTo(map);
+                                    var dropdownText = document.getElementById('dropdownText');
+                                    dropdownText.innerHTML = 'Plumbers';
+                                };
+
+                                var button2 = document.getElementById('ElectricianOnly');
+                                button2.onclick = function() {
+                                    var index = 0;
+                                    button2.onclick = showAllPlumbers(1);
+                                    map.eachLayer(function (layer) {
+                                        if (index !== 0) {
+                                            map.removeLayer(layer);
+                                        }
+                                        index++;
+                                    });
+                                    markerGroup2.addTo(map);
+                                    var dropdownText = document.getElementById('dropdownText');
+                                    dropdownText.innerHTML = 'Electricians';
+                                };
+
+                                var button3 = document.getElementById('PainterOnly');
+                                button3.onclick = function() {
+                                    var index = 0;
+                                    button3.onclick = showAllPlumbers(2);
+                                    map.eachLayer(function (layer) {
+                                        if (index !== 0) {
+                                            map.removeLayer(layer);
+                                        }
+                                        index++;
+                                    });
+                                    markerGroup1.addTo(map);
+                                    var dropdownText = document.getElementById('dropdownText');
+                                    dropdownText.innerHTML = 'Painters';
+                                };
+                            }
+                        });
+                    }
+                </script>
+
+                {% leaflet_map "gis" callback="window.our_layers" %}
+            </div>
+        </div>
+
+        <section class="listings">
+            <div class="container" id="listingsContainer">
+                <div class="col-lg-12" id="PremiumListingsTitle">
+                    <h2 class="section-heading">Premium Listings</h2>
+                </div>
+                <div class="row" id="PremiumListings">
+                </div>
+            </div>
+        </section>
+
+    </div>
+    </body>
+    {% endblock %}
+</html>

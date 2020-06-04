@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% csrf_token %}
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+    <link rel="stylesheet" type="text/css" href="{% static 'routing/leaflet-routing-machine.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+    <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'routing/leaflet-routing-machine.js' %}" ></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    </head>
+
+    <body>
+        <section class="row" id="body">
+            <div class="container" id="searchContainer">
+            {% if request.user.get_username %}
+                {% if favouriteList %}
+                    <div class="col-lg-12" id="SearchListingsTitle">
+                        <h2 class="section-heading">Favourites</h2>
+                    </div>
+                    <div class="row" id="SearchListings">
+                        {% for each_favouriteList in favouriteList %}
+                            <div class="col-md-3" id="favouriteListings">
+                                <div class="container" id="PremiumDetailsInner">
+                                    <!--Upon successful search book image with hyperlink appears -->
+                                    {% if each_favouriteList.image %}
+                                        <div class="container">
+                                            <img class="PremiumListings1" src="{{each_favouriteList.image}}" alt="No Image">
+                                            <div class="favDiv">
+                                                <i class="i_elementRemove fa fa-close" onclick="removeFavourite('{{ each_favouriteList.firstname }}', '{{ each_favouriteList.lastname }}');"></i>
+                                                <span class="span">Button</span>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <div class="PremiumDetails">
+                                        <h3 class="service-heading" id="PremiumListingsName">
+                                            {{each_favouriteList.company_name}}
+                                        </h3>
+                                        <p class="col-md-5 col-5" id="floatLeft">
+                                            <b>Name: </b>
+                                        </p>
+                                        <p class="col-md-7 col-7" id="floatRight">
+                                            {{each_favouriteList.firstname}} {{each_favouriteList.lastname}}
+                                        </p>
+                                        <p class="col-md-5 col-5" id="floatLeft">
+                                            <b>Occupation: </b>
+                                        </p>
+                                        <p class="col-md-7 col-7" id="floatRight">
+                                            {{each_favouriteList.occupation}}
+                                        </p>
+                                        <p class="col-md-5 col-5" id="floatLeft">
+                                            <b>Town:</b>
+                                        </p>
+                                        <p class="col-md-7 col-7" id="floatRight">
+                                            {{each_favouriteList.town}}
+                                        </p>
+                                        <p class="col-md-5 col-5" id="floatLeft">
+                                            <b>County:</b>
+                                        </p>
+                                        <p class="col-md-7 col-7" id="floatRight">
+                                            {{each_favouriteList.county}}
+                                        </p>
+                                        <p class="col-md-5 col-5" id="floatLeft">
+                                            <b>Email:</b>
+                                        </p>
+                                        <p class="col-md-7 col-7" id="floatRight">
+                                            {{each_favouriteList.email}}
+                                        </p>
+                                        <p class="col-md-5 col-5" id="floatLeft">
+                                            <b>Phone:</b>
+                                        </p>
+                                        <p class="col-md-7 col-7" id="floatRight">
+                                            {{each_favouriteList.phone_no}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="messages">Please favourite tradespeople to avail of this service</div>
+                {% endif %}
+            {% else %}
+                <div class="messages">Please login to save tradesperson</div>
+            {% endif %}
+            </div>
+        </section>
+    </body>
+    {% endblock %}
+</html>

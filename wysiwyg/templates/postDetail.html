@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% csrf_token %}
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+    <link rel="stylesheet" type="text/css" href="{% static 'routing/leaflet-routing-machine.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+    <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'routing/leaflet-routing-machine.js' %}" ></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+
+    </style>
+    </head>
+
+    <body>
+        <section class="row" id="body">
+            <div class="content container-fluid">
+                {% for post in posts %}
+                    <h2>{{ post.title }}</h2>
+
+                    <p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'post_edit' %}"><i class="fa fa-edit" style="font-size:30px;"></i></a>
+                        {% endif %}
+                    </p>
+                    <div>
+                        <p>{{  post.text| safe }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </body>
+    {% endblock %}
+</html>

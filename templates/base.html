@@ -1,0 +1,127 @@
+ <!DOCTYPE html>
+<html lang="en">
+    {% load pwa %}
+    {% load static %}
+    <head>
+        {% progressive_web_app_meta %}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"  integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"  crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"  integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"  crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"  crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://npmcdn.com/@reactivex/rxjs@5.0.0-beta.3/dist/global/Rx.umd.js"></script>
+        <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"  integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"  integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"  crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"  integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"  crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" media="screen">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}" type="text/css" />
+        <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+
+
+        <meta charset="UTF-8">
+        <title>Tradesperson Near Me</title>
+        <link href='https://fonts.googleapis.com/css?family=Raleway:300' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark" id="mainNav">
+            <a class="navbar-brand" href="{% url 'base_layout' %}">
+                <img class='logo_image' src="{% static 'images/tools.png' %}" alt="logo">
+                Tradesperson Near Me
+            </a>
+            <button class="navbar-toggler" id="responsiveImg" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+
+                    <li class="separator"></li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" id="hover1" href="{% url 'favourites_template' %}">Favourites</a>
+                    </li>
+                    <li class="separator"></li>
+                    <li class="nav-item" id="aboutForm">
+                        <a class="nav-link js-scroll-trigger" id="hover" href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="separator"></li>
+                    <li class="nav-item">
+                        <form method="GET" action="{% url 'search' %}" id="searchForm">
+                            <label>
+                                <input id="seachText" type="text" name="q" placeholder="Search..."/>
+                            </label>
+                            <input type="submit" value="Search" id="searchButton"/>
+                        </form>
+                    </li>
+
+                    {% if request.user.get_username %}
+                        <li class="separator" id="myprofile0.1"></li>
+                        <li class="nav-item" id="myprofile">
+                            <a role="menuitem" id="hover" tabindex="-1" href="{% url 'post_edit' %}">My portfolio</a>
+                        </li>
+                        <li class="separator" id="myprofile1.1"></li>
+                        <li class="nav-item" id="myprofile1">
+                            <a role="menuitem" id="hover" tabindex="-1" href="{% url 'tradesperson_edit_profile' %}">My profile</a>
+                        </li>
+                        <li class="separator" id="myprofile2.1"></li>
+                        <li class="nav-item" id="myprofile2">
+                            <a role="menuitem" id="hover" tabindex="-1" href="{% url 'edit_profile' %}">My profile</a>
+                        </li>
+                        <li class="separator"></li>
+                        <li class="nav-item" id="myprofileName">
+                            <a role="menuitem" id="" tabindex="-1">{{ request.user.get_username }}</a>
+                        </li>
+                    {% endif %}
+
+
+                        <li class="separator"></li>
+                        <li class="nav-item">
+                            {% if request.user.is_authenticated %}
+                            <form action="{% url 'logout' %}" method="post" class="form-inline my-2 my-lg-0">
+                                {% csrf_token %}
+                                <button class="btn btn-secondary my-2 my-sm-0" id="login_button" type="submit">Logout</button>
+                            </form>
+                            {% else %}
+                                <a style="color:black" href="{% url 'login' %}" id="login_button" class="btn btn-secondary my-2 my-sm-0" role="button">Login</a>
+                            {% endif %}
+
+                </ul>
+
+
+                {% if first_login == True %}
+                    <script>
+                        console.log('Updating location');
+                        updateTradespersonLocation();
+                    </script>
+                {% endif %}
+            </div>
+
+            <script type="text/javascript">
+                var checkModal = 1;
+                {% if request.user.get_username %}
+                    checkUser('{{ request.user.get_username }}', checkModal);
+                {% endif %}
+            </script>
+
+
+
+        </nav>
+        {% block body %}
+        {% endblock %}
+        <div id="body_content">
+
+
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

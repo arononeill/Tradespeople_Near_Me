@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% csrf_token %}
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+    <link rel="stylesheet" type="text/css" href="{% static 'routing/leaflet-routing-machine.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+    <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'routing/leaflet-routing-machine.js' %}" ></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'js/mapWork.js' %}" ></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    </style>
+    </head>
+    {% if request.user.get_username %}
+        <script type="text/javascript">
+            checkUser('{{ request.user.get_username }}');
+        </script>
+    {% endif %}
+
+    <body>
+        <div id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+            <div id="OuterDropdownContainer">
+                <div class="container-fluid" id="dropdownContainer">
+                    <div class="col-md-3" id="dropdown">
+                        <select id="options">
+                            <option value="" disabled selected hidden>Select your Tradesperson</option>
+                            <option value="Builder">Builder</option>
+                            <option value="Carpenter">Carpenter</option>
+                            <option value="Electrician">Electrician</option>
+                            <option value="Engineer">Engineer</option>
+                            <option value="Heating Contractor">Heating Contractor</option>
+                            <option value="Kitchen Fitter">Kitchen Fitter</option>
+                            <option value="Painter">Painter</option>
+                            <option value="Plasterer">Plasterer</option>
+                            <option value="Plumber">Plumber</option>
+                            <option value="Stone Worker">Stone Worker</option>
+                            <option value="Tiler">Tiler</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2" id="dropdown2">
+                        <select id="options2">
+                            <option value="" disabled selected hidden>County</option>
+                            <option value="Carlow">Carlow</option>
+                            <option value="Cavan">Cavan</option>
+                            <option value="Clare">Clare</option>
+                            <option value="Cork">Cork</option>
+                            <option value="Donegal">Donegal</option>
+                            <option value="Dublin">Dublin</option>
+                            <option value="Galway">Galway</option>
+                            <option value="Kerry">Kerry</option>
+                            <option value="Kildare">Kildare</option>
+                            <option value="Kilkenny">Kilkenny</option>
+                            <option value="Laois">Laois</option>
+                            <option value="Leitrim">Leitrim</option>
+                            <option value="Limerick">Limerick</option>
+                            <option value="Longford">Longford</option>
+                            <option value="Louth">Louth</option>
+                            <option value="Mayo">Mayo</option>
+                            <option value="Meath">Meath</option>
+                            <option value="Monaghan">Monaghan</option>
+                            <option value="Offaly">Offaly</option>
+                            <option value="Roscommon">Roscommon</option>
+                            <option value="Sligo">Sligo</option>
+                            <option value="Tipperary">Tipperary</option>
+                            <option value="Waterford">Waterford</option>
+                            <option value="Westmeath">Westmeath</option>
+                            <option value="Wexford">Wexford</option>
+                            <option value="Wicklow">Wicklow</option>
+                        </select>
+                    </div>
+                    <div class="col-5 col-md-2" id="dropdown3">
+                        <input class="WebsiteCheckbox" type="checkbox" value="websiteChecked" name="websiteCheck">
+                        <label for="websiteCheck" id="websiteCheck"> Website</label><br>
+                    </div>
+                    <div class="col-5 col-md-2" id="dropdown4">
+                        <input class="PremiumCheckbox" type="checkbox" value="premiumChecked" name="premiumCheck">
+                        <label for="premiumCheck" id="premiumCheck"> Premium</label><br>
+                    </div>
+                    <div class="col-12 col-md-2" id="dropdown5">
+                        <button class="btn btn-success btn_search" id="searchBtn" href="#body">
+                            <i class="fa fa-search"></i>
+                            <span class="showLabel">Search</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Advertisement Modal -->
+            <div id="myModal" class="modal">
+
+                <!-- Advertisement Modal content -->
+                <div class="modal-content">
+                    <div class="row">
+                        <div class="col-md-11" id="modalTitle">
+                            <p>Require a Website?</p>
+                        </div>
+                        <div class="col-md-1">
+                            <span class="close">&times;</span>
+                        </div>
+                        <div class="col-md-12" id="modalText">
+                            <p>20% Off Your First Order *</p>
+                        </div>
+                        <div class="col-md-12" id="outerBtnDiv">
+                            <div class="col-md-6" id="outerBtn1">
+                                <a href="mailto:arononeill98@gmail.com?subject=Website Enquiry">
+                                    <div class="col-md-12" id="modalBtn1">
+                                        <div class="col-md-12" id="leftBtn">
+                                            <p class="p1">Yes Please!</p>
+                                            <p class="p2">Send an Email Asking for a Quote</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-6" id="outerBtn2">
+                                <a class="closeAHref">
+                                    <div class="col-md-12" id="modalBtn2">
+                                        <div class="col-md-12" id="rightBtn">
+                                            <p class="p3">No thanks!</p>
+                                        </div>
+                                        <div class="col-md-12" id="rightBtn">
+                                            <p class="p4">I'm not interested</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-12" id="termConditioning">
+                            <p>* Valid for 24 Hours Only</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <section class="listings">
+                <div class="container" id="listingsContainer">
+                    <div class="col-lg-12" id="PremiumListingsTitle">
+                        <h2 class="section-heading">Premium Listings</h2>
+                    </div>
+                    <div class="row" id="PremiumListings">
+                    </div>
+                </div>
+            </section>
+            <section class="LatestListings">
+                <div class="container" id="LatestListingsContainer">
+                    <div class="col-lg-12" id="LatestListingsTitle">
+                        <h2 class="section-heading">Latest Listings</h2>
+                    </div>
+                    <div class="row" id="LatestListings">
+                    </div>
+                </div>
+            </section>
+            <section id="profileListingsSection">
+                <div class="row" id="profileListings">
+                    <div class="col-12" id="portfolioListings">
+                        <div class="col-md-4" id="tradespersonPanel">
+
+                        </div>
+                        <div class="col-md-8" id="portfolioPanel">
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <section class="row" id="body">
+            <div class="container" id="map_container">
+                <div id="side_panel" class="col-md-4">
+                    <div class="card border-dark mb-12" id="nav-profile2">
+                        <div class="card-body text-dark">
+                            <p class="card-text"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12" id="map">
+                    <script type="text/javascript">
+                        function our_layers(map) {
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                console.log(position.coords.latitude, position.coords.longitude);
+                                console.log("Location permissions granted");
+                                createMapWithLocation(map, position.coords.latitude, position.coords.longitude);
+                            },
+                            function(error) {
+                            if (error.code === error.PERMISSION_DENIED)
+                                console.log("Location permissions denied");
+                                createMap(map);
+                            });
+                        }
+                        function createMapWithLocation(map, userLat, userLng) {
+                            var markerGroup = L.layerGroup().addTo(map);
+                            var markerGroup1 = L.layerGroup().addTo(map);
+                            var markerGroup2 = L.layerGroup().addTo(map);
+                            var markerGroup4 = L.layerGroup().addTo(map);
+                            var markerGroupBuilder = L.layerGroup().addTo(map);
+                            var markerGroupCarpenter = L.layerGroup().addTo(map);
+                            var markerGroupEngineer = L.layerGroup().addTo(map);
+                            var markerGroupHeating = L.layerGroup().addTo(map);
+                            var markerGroupPlasterer = L.layerGroup().addTo(map);
+                            var markerGroupStone = L.layerGroup().addTo(map);
+                            var markerGroupTiler = L.layerGroup().addTo(map);
+                            var circleGroup = L.layerGroup().addTo(map);
+                            var userGroup = L.layerGroup().addTo(map);
+
+                            var userIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/userLocation2.png',
+                                iconSize: [40, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var markers = L.marker([userLat, userLng], {
+                                icon: userIcon
+                            }).bindPopup('Your Location')
+                                .addTo(userGroup);
+
+                            var redIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-red3.png',
+                                iconSize: [40, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var blueIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-blue.png',
+                                iconSize: [37, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var greenIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-green.png',
+                                iconSize: [37, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var commonIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-blue.png',
+                                iconSize: [37, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var usernames = [];
+                            var points = new L.GeoJSON.AJAX("{% url 'tradesperson' %}",{
+                                onEachFeature: function(feature, layer) {
+                                    var tradespersonLat = layer._latlng.lat;
+                                    var tradespersonLng = layer._latlng.lng;
+
+                                    var distance = getDistanceBetweenPoints(userLat, userLng, tradespersonLat, tradespersonLng);
+                                    var travel_distance = feature.properties.travel_distance;
+                                    if (distance < travel_distance) {
+                                        usernames.push(feature.properties.username);
+                                        var name = feature.properties.firstname + " " + feature.properties.lastname;
+                                        if (feature.properties.occupation === 'Plumber') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker3 = L.marker([lat, long], {
+                                                icon: redIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroup)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Electrician') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker2 = L.marker([lat, long], {
+                                                icon: blueIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroup2)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Painter') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: greenIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroup1)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Kitchen Fitter') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroup4)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Builder') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupBuilder)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Carpenter') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupCarpenter)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Engineer') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupEngineer)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Heating Contractor') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupHeating)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Plasterer') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupPlasterer)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Stone Worker') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupStone)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Tiler') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupTiler)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                    }
+                                }
+                            });
+                            var counter = 0;
+                            {% if request.user.get_username %}
+                                counter = 1;
+                            {% else %}
+                                counter = 0;
+                            {% endif %}
+                            var map2 = document.getElementById("searchBtn");
+                            var noLocation = 0;
+                            map2.addEventListener("click", function () {
+                                clearLayers(map, markerGroup, markerGroup1, markerGroup2, circleGroup, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                                markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler);
+                                searchQuery(map, markerGroup, markerGroup1, markerGroup2, counter, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                                markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler, usernames, noLocation, userLat, userLng);
+                            });
+
+                            showAllPremiumTradespeople(map, markerGroup, markerGroup1, markerGroup2, counter, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                            markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler);
+                            showAllLatestTradespeople(map, markerGroup, markerGroup1, markerGroup2, counter, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                            markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler);
+                        }
+                        function createMap(map) {
+                            var markerGroup = L.layerGroup().addTo(map);
+                            var markerGroup1 = L.layerGroup().addTo(map);
+                            var markerGroup2 = L.layerGroup().addTo(map);
+                            var markerGroup4 = L.layerGroup().addTo(map);
+                            var markerGroupBuilder = L.layerGroup().addTo(map);
+                            var markerGroupCarpenter = L.layerGroup().addTo(map);
+                            var markerGroupEngineer = L.layerGroup().addTo(map);
+                            var markerGroupHeating = L.layerGroup().addTo(map);
+                            var markerGroupPlasterer = L.layerGroup().addTo(map);
+                            var markerGroupStone = L.layerGroup().addTo(map);
+                            var markerGroupTiler = L.layerGroup().addTo(map);
+                            var circleGroup = L.layerGroup().addTo(map);
+
+                            var redIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-red3.png',
+                                iconSize: [40, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var blueIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-blue.png',
+                                iconSize: [37, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var greenIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-green.png',
+                                iconSize: [37, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var commonIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-blue.png',
+                                iconSize: [37, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+                            var usernames = [];
+                            var points = new L.GeoJSON.AJAX("{% url 'tradesperson' %}",{
+                                onEachFeature: function(feature, layer) {
+                                    var name = feature.properties.firstname + " " + feature.properties.lastname;
+                                    usernames.push(feature.properties.username);
+                                    if (feature.properties.occupation === 'Plumber') {
+                                        var lat = layer._latlng.lat;
+                                        var long = layer._latlng.lng;
+                                        var marker3 = L.marker([lat, long], {
+                                            icon: redIcon
+                                        }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                            .addTo(markerGroup)
+                                            .on('click', function (e) {
+                                                marker_radius = (feature.properties.travel_distance) * 1000;
+                                                circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                clearRadius(map, circle, circleGroup);
+                                            });
+                                    }
+                                    if (feature.properties.occupation === 'Electrician') {
+                                        var lat = layer._latlng.lat;
+                                        var long = layer._latlng.lng;
+                                        var marker2 = L.marker([lat, long], {
+                                            icon: blueIcon
+                                        }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                            .addTo(markerGroup2)
+                                            .on('click', function (e) {
+                                                marker_radius = (feature.properties.travel_distance) * 1000;
+                                                circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                clearRadius(map, circle, circleGroup);
+                                            });
+                                    }
+                                    if (feature.properties.occupation === 'Painter') {
+                                        var lat = layer._latlng.lat;
+                                        var long = layer._latlng.lng;
+                                        var marker1 = L.marker([lat, long], {
+                                            icon: greenIcon
+                                        }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                            .addTo(markerGroup1)
+                                            .on('click', function (e) {
+                                                marker_radius = (feature.properties.travel_distance) * 1000;
+                                                circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                clearRadius(map, circle, circleGroup);
+                                            });
+                                    }
+                                    if (feature.properties.occupation === 'Kitchen Fitter') {
+                                        var lat = layer._latlng.lat;
+                                        var long = layer._latlng.lng;
+                                        var marker1 = L.marker([lat, long], {
+                                            icon: commonIcon
+                                        }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                            .addTo(markerGroup4)
+                                            .on('click', function (e) {
+                                                marker_radius = (feature.properties.travel_distance) * 1000;
+                                                circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                clearRadius(map, circle, circleGroup);
+                                            });
+                                    }
+                                    if (feature.properties.occupation === 'Builder') {
+                                        var lat = layer._latlng.lat;
+                                        var long = layer._latlng.lng;
+                                        var marker1 = L.marker([lat, long], {
+                                            icon: commonIcon
+                                        }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                            .addTo(markerGroupBuilder)
+                                            .on('click', function (e) {
+                                                marker_radius = (feature.properties.travel_distance) * 1000;
+                                                circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                clearRadius(map, circle, circleGroup);
+                                            });
+                                    }
+                                    if (feature.properties.occupation === 'Carpenter') {
+                                        var lat = layer._latlng.lat;
+                                        var long = layer._latlng.lng;
+                                        var marker1 = L.marker([lat, long], {
+                                            icon: commonIcon
+                                        }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                            .addTo(markerGroupCarpenter)
+                                            .on('click', function (e) {
+                                                marker_radius = (feature.properties.travel_distance) * 1000;
+                                                circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                clearRadius(map, circle, circleGroup);
+                                            });
+                                    }
+                                    if (feature.properties.occupation === 'Engineer') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupEngineer)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Heating Contractor') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupHeating)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Plasterer') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupPlasterer)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Stone Worker') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupStone)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                        if (feature.properties.occupation === 'Tiler') {
+                                            var lat = layer._latlng.lat;
+                                            var long = layer._latlng.lng;
+                                            var marker1 = L.marker([lat, long], {
+                                                icon: commonIcon
+                                            }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                                .addTo(markerGroupTiler)
+                                                .on('click', function (e) {
+                                                    marker_radius = (feature.properties.travel_distance) * 1000;
+                                                    circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                    clearRadius(map, circle, circleGroup);
+                                                });
+                                        }
+                                }
+                            });
+                            var counter = 0;
+                            {% if request.user.get_username %}
+                                counter = 1;
+                            {% else %}
+                                counter = 0;
+                            {% endif %}
+                            var map2 = document.getElementById("searchBtn");
+                            var noLocation = 1;
+                            map2.addEventListener("click", function () {
+                                clearLayers(map, markerGroup, markerGroup1, markerGroup2, circleGroup, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                                markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler);
+                                searchQuery(map, markerGroup, markerGroup1, markerGroup2, counter, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                                markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler, usernames, noLocation);
+                            });
+                            showAllPremiumTradespeople(map, markerGroup, markerGroup1, markerGroup2, counter, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                            markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler);
+                            showAllLatestTradespeople(map, markerGroup, markerGroup1, markerGroup2, counter, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                            markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler);
+                        }
+
+                        function showTradespersonOnly(data, map, markerGroup, markerGroup1, markerGroup2, markerGroup4, markerGroupBuilder, markerGroupCarpenter,
+                            markerGroupEngineer, markerGroupHeating, markerGroupPlasterer, markerGroupStone, markerGroupTiler) {
+                            var side_panel = document.getElementById('side_panel');
+                            side_panel.style.display = 'none';
+                            map.removeLayer(markerGroup);
+                            map.removeLayer(markerGroup1);
+                            map.removeLayer(markerGroup2);
+                            map.removeLayer(markerGroup4);
+                            map.removeLayer(markerGroupBuilder);
+                            map.removeLayer(markerGroupCarpenter);
+                            map.removeLayer(markerGroupEngineer);
+                            map.removeLayer(markerGroupHeating);
+                            map.removeLayer(markerGroupPlasterer);
+                            map.removeLayer(markerGroupStone);
+                            map.removeLayer(markerGroupTiler);
+                            var newMarkerGroup = L.layerGroup().addTo(map);
+                            var circleGroup = L.layerGroup().addTo(map);
+                            var redIcon = L.icon({
+                                iconUrl: '../static/leaflet/images/marker-icon-red3.png',
+                                iconSize: [40, 40],
+                                iconAnchor: [20, 40],
+                                popupAnchor: [0, -36],
+                            });
+
+                            var points = new L.GeoJSON.AJAX("{% url 'tradesperson' %}",{
+                                onEachFeature: function(feature, layer) {
+                                    var portfolioUsername = data.username;
+                                    var name = feature.properties.firstname + " " + feature.properties.lastname;
+                                    if (feature.properties.username === portfolioUsername) {
+                                        var lat = layer._latlng.lat;
+                                        var long = layer._latlng.lng;
+                                        var marker3 = L.marker([lat, long], {
+                                            icon: redIcon
+                                        }).bindPopup(name + '<br>' + feature.properties.occupation)
+                                            .addTo(newMarkerGroup)
+                                            .openPopup()
+                                            .on('click', function (e) {
+                                                marker_radius = (feature.properties.travel_distance) * 1000;
+                                                circle = L.circle([e.latlng.lat, e.latlng.lng], marker_radius);
+                                                clearRadius(map, circle, circleGroup);
+                                            });
+                                        map.setView(new L.LatLng(lat, long), 12.5);
+                                    }
+                                }
+                            });
+                        }
+
+                    </script>
+                    {% leaflet_map "gis" callback="window.our_layers" %}
+                </div>
+            </div>
+
+        </section>
+        <section class="RelatedListings">
+            <div class="container" id="RelatedListingsContainer">
+                <div class="col-lg-12" id="RelatedListingsTitle">
+                    <h2 class="section-heading">Related Listings</h2>
+                </div>
+                    <div class="row" id="RelatedListings">
+                </div>
+            </div>
+        </section>
+    </body>
+    {% endblock %}
+</html>

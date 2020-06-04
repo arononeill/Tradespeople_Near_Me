@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% csrf_token %}
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <link rel="shortcut icon" href="https://nedbatchelder.com/pix/django-icon-256.png">
+    <link rel="stylesheet" type="text/css" href="{% static 'routing/leaflet-routing-machine.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css' %}">
+    <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'routing/leaflet-routing-machine.js' %}" ></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+    <script type="text/javascript" src="{% static 'js/index.js' %}" ></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+
+    </style>
+    </head>
+
+    <body>
+        <section class="row" id="body">
+            <div class="container" id="searchContainer">
+                {% if queryList %}
+                    <div class="col-lg-12" id="SearchListingsTitle">
+                        <h2 class="section-heading">Search Results</h2>
+                    </div>
+                    <div class="row" id="SearchListings">
+                        {% for each_queryList in queryList %}
+                            <div class="col-md-3" id="SearchListingsDiv">
+                                <div class="container" id="PremiumDetailsInner">
+                                    {% if each_queryList.image %}
+                                        <div class="container">
+                                            <img class="PremiumListings1" src="{{each_queryList.image.url}}" alt="No Image">
+                                            <div class="favDiv">
+                                                <i class="i_element" onclick="addFavourite($(this), '{{ each_queryList.firstname }}',
+                                                        '{{ each_queryList.lastname }}', '{{ each_queryList.email }}',
+                                                        '{{ each_queryList.phone_no }}', '{{ each_queryList.company_name }}',
+                                                        '{{ each_queryList.occupation }}', '{{ each_queryList.town }}',
+                                                        '{{ each_queryList.county }}', '{{ each_queryList.image.url }}');"></i>
+                                                <span class="span">Button</span>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <div class="PremiumDetails">
+                                        <h3 class="service-heading" id="PremiumListingsName">{{each_queryList.company_name}}</h3>
+                                        <p class="col-md-5 col-5" id="floatLeft"><b>Name: </b></p>
+                                        <p class="col-md-7 col-7" id="floatRight">{{each_queryList.firstname}} {{each_queryList.lastname}}</p>
+                                        <p class="col-md-5 col-5" id="floatLeft"><b>Occupation: </b></p>
+                                        <p class="col-md-7 col-7" id="floatRight">{{each_queryList.occupation}}</p>
+                                        <p class="col-md-5 col-5" id="floatLeft"><b>Town:</b></p>
+                                        <p class="col-md-7 col-7" id="floatRight">{{each_queryList.town}}</p>
+                                        <p class="col-md-5 col-5" id="floatLeft"><b>County:</b></p>
+                                        <p class="col-md-7 col-7" id="floatRight">{{each_queryList.county}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </body>
+    {% endblock %}
+</html>
