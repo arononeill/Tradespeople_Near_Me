@@ -32,7 +32,7 @@ automium-web==0.1.1
 beautifulsoup4==4.6.0
 blinker==1.4
 cffi==1.13.2
-cryptography==2.1.4
+cryptography==3.2
 Flask==1.1.1
 gunicorn==19.9.0
 itsdangerous==1.1.0
